@@ -1,2 +1,2 @@
-# web-project
+# hostel-management-system
 web description
