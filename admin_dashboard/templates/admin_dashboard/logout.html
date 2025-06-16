@@ -1,0 +1,21 @@
+{% extends 'admin_dashboard/base.html' %}
+{% block title %}Logout{% endblock %}
+{% block page_title %}Logout{% endblock %}
+{% block content %}
+    <div class="logout-container">
+        <h2>Confirm Logout</h2>
+        <p>Are you sure you want to log out?</p>
+        <form method="post" action="{% url 'admin_logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, Log Out</button>
+            <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+{% endblock %}
+{% block extra_css %}
+<style>
+    .logout-container { text-align: center; padding: 40px; background: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); max-width: 400px; margin: 0 auto; }
+    .logout-container h2 { margin-bottom: 20px; color: #2c3e50; }
+    .logout-container p { margin-bottom: 20px; color: #7f8c8d; }
+</style>
+{% endblock %}

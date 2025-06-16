@@ -1,0 +1,36 @@
+{% extends 'admin_dashboard/base.html' %}
+{% block title %}Residents{% endblock %}
+{% block page_title %}Manage Residents{% endblock %}
+{% block content %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Admission Code</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Room Type</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for resident in residents %}
+                <tr>
+                    <td>{{ resident.name }}</td>
+                    <td>{{ resident.admission_code }}</td>
+                    <td>{{ resident.email }}</td>
+                    <td>{{ resident.phone }}</td>
+                    <td>{{ resident.room_type.type_name }}</td>
+                    <td>{{ resident.status }}</td>
+                    <td>
+                        <a href="{% url 'update_resident' resident.admission_code %}" class="btn">Edit</a>
+                        <a href="{% url 'delete_resident' resident.admission_code %}" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="7">No residents found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,208 @@
+{% extends 'hostel_app/base.html' %}
+{% load static %}
+
+{% block content %}
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h2>Welcome to Our Hostel</h2>
+            <p>Comfortable living with study-friendly environment for boys</p>
+            <a href="{% url 'admission_apply' %}" class="cta-button">Apply for Admission</a>
+        </div>
+    </section>
+
+    <section id="rooms" class="section">
+        <img src="https://images.unsplash.com/photo-1598928636135-d146006ff4be" alt="Hostel Rooms" class="section-image">
+        <h2>Our Hostel Rooms</h2>
+        <div class="rooms-grid" id="rooms-grid">
+            {% for room_type in room_types %}
+                <div class="room-card" onclick="showGallery({{ room_type.id }})">
+                    {% if room_type.images.first %}
+                        <img src="{{ room_type.images.first.image.url }}" alt="{{ room_type.type_name }}">
+                    {% else %}
+                        <img src="{% static 'placeholder.jpg' %}" alt="{{ room_type.type_name }}">
+                    {% endif %}
+                    <div class="room-info">
+                        <h3>{{ room_type.type_name }}</h3>
+                        <div class="room-details">
+                            <p><strong>Rent:</strong> ₹{{ room_type.price_monthly|floatformat:2 }}/month</p>
+                            <p><strong>Security Deposit:</strong> ₹{{ room_type.security_deposit|floatformat:2 }}</p>
+                            <p><strong>Capacity:</strong> {{ room_type.capacity }} boys</p>
+                            <p><strong>Size:</strong> {{ room_type.size }}</p>
+                            <p><strong>Floor:</strong> {{ room_type.floor }}</p>
+                            <p><strong>Facilities:</strong> {{ room_type.facilities }}</p>
+                            <p><strong>Maintenance:</strong> {{ room_type.maintenance }}</p>
+                            <div class="features-grid">
+                                {% for amenity in room_type.amenities.all %}
+                                    <p>{{ amenity.name }}</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section id="availability" class="section">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQORkng-JRnhJhMzMmJJr1Pa0BFUHVYXZyukw&s" alt="Hostel Common Area" class="section-image">
+        <h2>Room Availability</h2>
+        <select id="availability-room" onchange="showAvailabilityCalendar()">
+            <option value="">Select Room Type</option>
+            {% for room_type in room_types %}
+                <option value="{{ room_type.id }}">{{ room_type.type_name }} (₹{{ room_type.price_monthly|floatformat:2 }}/month)</option>
+            {% endfor %}
+        </select>
+        <div id="calendar" class="calendar"></div>
+    </section>
+
+    <section id="feedback" class="section">
+        <img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39" alt="Feedback Corner" class="section-image">
+        <h2>Hostel Feedback</h2>
+        <a href="{% url 'submit_feedback' %}" class="cta-button">Submit Feedback</a>
+        
+        <div id="feedback-list" class="reviews">
+            {% for fb in recent_feedback %}
+                <div class="review">
+                    <p><strong>{{ fb.email }}</strong> ({{ fb.rating }}★) 
+                        {% if fb.verified %}<span style="color: #2ecc71;">✓ Resident</span>{% endif %} - {{ fb.date }}</p>
+                    <p>{{ fb.text }}</p>
+                </div>
+            {% empty %}
+                <p>No feedback yet. Be the first to share your experience!</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section id="mess" class="section">
+        <img src="https://png.pngtree.com/thumb_back/fh260/background/20210912/pngtree-student-canteen-image_871342.jpg" alt="Mess Hall" class="section-image">
+        <h2>Mess Menu</h2>
+        <div id="mess-menu" class="mess-menu">
+            {% for menu in mess_menu %}
+                <div class="menu-day">
+                    <h3>{{ menu.day }}</h3>
+                    <p><strong>Breakfast:</strong> {{ menu.breakfast }}</p>
+                    <p><strong>Lunch:</strong> {{ menu.lunch }}</p>
+                    <p><strong>Dinner:</strong> {{ menu.dinner }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section id="rules" class="section">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOAwDvok8SDhCUhHP2dp0cIiey5-9mA1Ez6w&s" alt="Hostel Rules" class="section-image">
+        <h2>Hostel Rules & Warden Info</h2>
+        <div id="rules-list">
+            <h3>Rules</h3>
+            <ul>
+                {% for rule in hostel_rules %}
+                    <li>{{ rule.rule }}</li>
+                {% endfor %}
+            </ul>
+            
+            {% if warden_info %}
+                <h3>Warden Information</h3>
+                <p><strong>Name:</strong> {{ warden_info.name }}</p>
+                <p><strong>Contact:</strong> {{ warden_info.contact }}</p>
+                <p><strong>Email:</strong> {{ warden_info.email }}</p>
+                <p><strong>Office Hours:</strong> {{ warden_info.office_hours }}</p>
+                <p><strong>Emergency Contact:</strong> {{ warden_info.emergency_contact }}</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <div id="gallery-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="gallery-title"></h2>
+            <div id="gallery-images" class="gallery-images"></div>
+            <button onclick="closeGallery()">Close</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Room availability data from backend
+    const availabilityData = {{ availability|safe }};
+    
+    // Show gallery
+    function showGallery(roomTypeId) {
+        fetch(`/api/room-types/`)
+            .then(response => response.json())
+            .then(data => {
+                const roomType = data.room_types.find(r => r.id === roomTypeId);
+                if (!roomType) return;
+                
+                const modal = document.getElementById('gallery-modal');
+                const title = document.getElementById('gallery-title');
+                const images = document.getElementById('gallery-images');
+                
+                title.textContent = `${roomType.type} Gallery`;
+                images.innerHTML = '';
+                
+                roomType.images.forEach(img => {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = img;
+                    images.appendChild(imgElement);
+                });
+                
+                modal.style.display = 'flex';
+            });
+    }
+
+    // Close gallery
+    function closeGallery() {
+        document.getElementById('gallery-modal').style.display = 'none';
+    }
+
+    // Show availability calendar
+    function showAvailabilityCalendar() {
+        const roomTypeId = document.getElementById('availability-room').value;
+        if (!roomTypeId) return;
+        
+        fetch(`/api/room-availability/?room_type_id=${roomTypeId}`)
+            .then(response => response.json())
+            .then(data => {
+                const calendar = document.getElementById('calendar');
+                calendar.innerHTML = '';
+                
+                const today = new Date();
+                for (let i = 0; i < 30; i++) {
+                    const date = new Date(today);
+                    date.setDate(today.getDate() + i);
+                    const dateStr = date.toISOString().split('T')[0];
+                    const available = data[dateStr] > 0;
+                    
+                    const day = document.createElement('div');
+                    day.className = `calendar-day ${available ? 'available' : 'booked'}`;
+                    day.innerHTML = `
+                        ${date.toLocaleDateString('en-US', { weekday: 'short' })}<br>
+                        ${date.getDate()}/${date.getMonth() + 1}<br>
+                        ${available ? `${data[dateStr]} Available` : 'Full'}
+                    `;
+                    calendar.appendChild(day);
+                }
+            });
+    }
+
+    // Modal close
+    document.getElementById('gallery-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeGallery();
+    });
+
+    // Smooth scroll
+    document.querySelectorAll('nav a').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href.includes('#') && !href.startsWith('http')) {
+                const targetId = href.split('#')[1];
+                const target = document.getElementById(targetId);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
+

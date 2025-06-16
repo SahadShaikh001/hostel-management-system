@@ -1,0 +1,31 @@
+{% extends 'admin_dashboard/base.html' %}
+{% block title %}Activity Log{% endblock %}
+{% block page_title %}Activity Log{% endblock %}
+{% block content %}
+    <div class="filter-section">
+        <h3>Filter Activity Log</h3>
+        <form method="get">
+            {% csrf_token %}
+            {{ filter_form.as_p }}
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </form>
+    </div>
+    <table class="data-table">
+        <thead>
+            <tr><th>User</th><th>Action</th><th>Details</th><th>Timestamp</th><th>Model</th></tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+                <tr>
+                    <td>{{ log.user.username }}</td>
+                    <td>{{ log.action }}</td>
+                    <td>{{ log.details }}</td>
+                    <td>{{ log.timestamp }}</td>
+                    <td>{{ log.model_name }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="5">No activity logged.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

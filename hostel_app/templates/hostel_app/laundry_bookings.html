@@ -1,0 +1,45 @@
+{% extends 'hostel_app/base.html' %}
+
+{% block title %}Your Laundry Bookings{% endblock %}
+
+{% block content %}
+<section class="section">
+    <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427" alt="Laundry Room" class="section-image">
+    <h2>Your Laundry Bookings</h2>
+    
+    {% if not user.is_authenticated %}
+        <div class="alert alert-warning">
+            Please <a href="{% url 'login' %}">login</a> to view your bookings.
+        </div>
+    {% else %}
+        <div class="laundry-schedule">
+            <h3>Your Bookings</h3>
+            {% if bookings %}
+                {% for booking in bookings %}
+                    <div class="review">
+                        <p><strong>Day:</strong> {{ booking.day }}</p>
+                        <p><strong>Items:</strong> {{ booking.items }}</p>
+                        <p><strong>Date:</strong> {{ booking.date }}</p>
+                        <p><strong>Status:</strong> {{ booking.status }}</p>
+                        {% if booking.status == 'Booked' %}
+                            <a href="{% url 'cancel_laundry' booking.id %}" class="cancel-btn" onclick="return confirm('Are you sure you want to cancel this booking?')">Cancel</a>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>You don't have any laundry bookings yet.</p>
+            {% endif %}
+            
+            <h3>Slot Availability</h3>
+            {% for day, slots in availability.items %}
+                <div class="menu-day">
+                    <p>{{ day }}: {{ slots }} slots available</p>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <a href="{% url 'book_laundry' %}" class="cta-button" style="margin-top: 20px; display: inline-block;">Book New Slot</a>
+    {% endif %}
+</section>
+{% endblock %}
+

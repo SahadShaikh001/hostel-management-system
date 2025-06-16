@@ -1,0 +1,73 @@
+{% extends 'hostel_app/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: #f0f2f5;
+        text-align: center;
+    }
+    
+    .section {
+        max-width: 400px;
+        margin: 50px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .cta-button {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 12px;
+        font-size: 18px;
+        border-radius: 6px;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .cta-button:hover {
+        background: #0056b3;
+        transform: scale(1.05);
+    }
+
+    .alert { padding: 10px; margin-bottom: 15px; border-radius: 5px; font-size: 16px; }
+    .alert-success { background:rgb(40, 46, 167); color: white; }
+    .alert-error { background: #dc3545; color: white; }
+
+    @media (max-width: 500px) {
+        .section { width: 90%; padding: 15px; }
+    }
+</style>
+
+<section class="section">
+    <h2>Register</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" class="form-grid">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="cta-button">Register</button>
+    </form>
+
+    <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+</section>
+{% endblock %}

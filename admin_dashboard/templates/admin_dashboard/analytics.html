@@ -1,0 +1,46 @@
+{% extends 'admin_dashboard/base.html' %}
+{% block title %}Analytics{% endblock %}
+{% block page_title %}Analytics{% endblock %}
+{% block content %}
+    <div class="analytics-container">
+        <div class="chart-section">
+            <h3>Resident Trends (Last 30 Days)</h3>
+            <div class="chart-placeholder">
+                <canvas id="residentsChart"></canvas>
+            </div>
+        </div>
+        <div class="chart-section">
+            <h3>Booking Trends (Last 30 Days)</h3>
+            <div class="chart-placeholder">
+                <canvas id="bookingsChart"></canvas>
+            </div>
+        </div>
+        <div class="chart-section">
+            <h3>Monthly Revenue (Last 6 Months)</h3>
+            <div class="chart-placeholder">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const residentsData = {
+        labels: ['Apr 1', 'Apr 5', 'Apr 9', 'Apr 13', 'Apr 17', 'Apr 21', 'Apr 25'],
+        datasets: [{ label: 'New Residents', data: [10, 15, 12, 18, 20, 22, 25], borderColor: '#3498db', fill: false }]
+    };
+    const bookingsData = {
+        labels: ['Apr 1', 'Apr 5', 'Apr 9', 'Apr 13', 'Apr 17', 'Apr 21', 'Apr 25'],
+        datasets: [{ label: 'Bookings', data: [5, 8, 6, 10, 12, 9, 15], borderColor: '#2ecc71', fill: false }]
+    };
+    const revenueData = {
+        labels: ['Oct 2024', 'Nov 2024', 'Dec 2024', 'Jan 2025', 'Feb 2025', 'Mar 2025'],
+        datasets: [{ label: 'Revenue (₹)', data: [20000, 22000, 23000, 24000, 24500, 25000], borderColor: '#e74c3c', fill: false }]
+    };
+
+    new Chart(document.getElementById('residentsChart'), { type: 'line', data: residentsData, options: { scales: { y: { beginAtZero: true } } } });
+    new Chart(document.getElementById('bookingsChart'), { type: 'line', data: bookingsData, options: { scales: { y: { beginAtZero: true } } } });
+    new Chart(document.getElementById('revenueChart'), { type: 'line', data: revenueData, options: { scales: { y: { beginAtZero: true } } } });
+</script>
+{% endblock %}

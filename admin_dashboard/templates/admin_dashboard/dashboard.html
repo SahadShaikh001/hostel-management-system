@@ -1,0 +1,70 @@
+{% extends 'admin_dashboard/base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Admin-Dashboard{% endblock %}
+{% block content %}
+    <div class="dashboard-cards">
+        <div class="card">
+            <h3>Total Users</h3>
+            <p class="value">{{ total_users }}</p>
+            <p class="trend">+12% from last month</p>
+        </div>
+        <div class="card">
+            <h3>Active Bookings</h3>
+            <p class="value">{{ active_bookings }}</p>
+            <p class="trend">+4% from last month</p>
+        </div>
+        <div class="card">
+            <h3>Available Rooms</h3>
+            <p class="value">{{ available_rooms }}</p>
+            <p class="trend">-2% from last month</p>
+        </div>
+        <div class="card">
+            <h3>Monthly Revenue</h3>
+            <p class="value">₹{{ monthly_revenue }}</p>
+            <p class="trend">+8% from last month</p>
+        </div>
+    </div>
+    <div class="dashboard-sections">
+        <div class="section">
+            <h3>Overview</h3>
+            <div class="chart-placeholder">
+                <!-- Placeholder for chart (can integrate Chart.js later) -->
+                Booking trends for the past 30 days
+            </div>
+        </div>
+        <div class="section">
+            <h3>Recent Bookings</h3>
+            <div class="recent-bookings">
+                {% for booking in recent_bookings %}
+                    <div class="booking-item">
+                        <span>{{ booking.room_type.type_name }}</span>
+                        <span>{{ booking.date }}</span>
+                        <span>{{ booking.booked_count }} booked</span>
+                    </div>
+                {% empty %}
+                    <p>No recent bookings.</p>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="section">
+            <h3>Latest Admission Applications</h3>
+            <div class="admission-applications">
+                {% for resident in recent_applications %}
+                    <div class="application-item">
+                        <div class="avatar">{{ resident.name|first }}</div>
+                        <div class="details">
+                            <p>{{ resident.name }}</p>
+                            <p>{{ resident.email }}</p>
+                        </div>
+                        <span class="status {% if resident.status == 'Confirmed' %}status-confirmed{% elif resident.status == 'Cancelled' %}status-cancelled{% else %}status-pending{% endif %}">
+                            {{ resident.status }}
+                        </span>
+                    </div>
+                {% empty %}
+                    <p>No recent applications.</p>
+                {% endfor %}
+            </div>
+            <a href="{% url 'admin_residents' %}" class="view-all">View all bookings</a>
+        </div>
+    </div>
+{% endblock %}

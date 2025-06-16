@@ -1,0 +1,29 @@
+{% extends 'admin_dashboard/base.html' %}
+{% block title %}Laundry{% endblock %}
+{% block page_title %}Manage Laundry Bookings{% endblock %}
+{% block content %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Day</th>
+                <th>Items</th>
+                <th>Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in laundry_bookings %}
+                <tr>
+                    <td>{{ booking.email }}</td>
+                    <td>{{ booking.day }}</td>
+                    <td>{{ booking.items }}</td>
+                    <td>{{ booking.date }}</td>
+                    <td>{{ booking.status }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="5">No laundry bookings found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'hostel_app/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Book Laundry Slot{% endblock %}
+
+{% block content %}
+<section class="section">
+    <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427" alt="Laundry Room" class="section-image">
+    <h2>Laundry Schedule</h2>
+    
+    {% if not user.is_authenticated %}
+        <div class="alert alert-warning">
+            Please <a href="{% url 'login' %}">login</a> to book a laundry slot.
+        </div>
+    {% else %}
+        <div class="laundry-schedule">
+            <h3>Slot Availability</h3>
+            {% for day, slots in availability.items %}
+                <div class="menu-day">
+                    <p>{{ day }}: {{ slots }} slots available</p>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <form method="post" class="form-grid">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="cta-button">Book Laundry Slot</button>
+        </form>
+        
+        <a href="{% url 'view_laundry' %}" class="cta-button" style="margin-top: 20px; display: inline-block;">View Your Bookings</a>
+    {% endif %}
+</section>
+{% endblock %}
+

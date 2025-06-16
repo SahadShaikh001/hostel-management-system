@@ -1,0 +1,14 @@
+{% extends 'admin_dashboard/base.html' %}
+{% block title %}Reports{% endblock %}
+{% block page_title %}Generate Reports{% endblock %}
+{% block content %}
+    <div class="report-options">
+        <h3>Download Reports</h3>
+        <div class="report-buttons">
+            <a href="{% url 'download_report' 'residents' %}?format=pdf" class="btn">Residents (PDF)</a>
+            <a href="{% url 'download_report' 'residents' %}?format=csv" class="btn">Residents (CSV)</a>
+            <a href="{% url 'download_report' 'bookings' %}?format=pdf" class="btn">Bookings (PDF)</a>
+            <a href="{% url 'download_report' 'bookings' %}?format=csv" class="btn">Bookings (CSV)</a>
+        </div>
+    </div>
+{% endblock %}

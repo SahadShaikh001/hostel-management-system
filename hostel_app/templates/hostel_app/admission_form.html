@@ -1,0 +1,173 @@
+
+{% extends 'hostel_app/base.html' %}
+
+{% block title %}Hostel Admission Application{% endblock %}
+
+{% block content %}
+<style>
+    /* General Styling */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: #f0f2f5;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Section Wrapper */
+    .section {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    /* Image Styling */
+    .section-image {
+        width: 50%;
+        height: auto;
+        border-radius: 10px;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Form Wrapper */
+    .form-container {
+        width: 50%;
+        text-align: left;
+    }
+
+    .form-container h2 {
+        margin-bottom: 15px;
+    }
+
+    /* Form Styling */
+    .form-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .form-grid input, .form-grid select, .form-grid textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 16px;
+        transition: border-color 0.3s ease-in-out;
+    }
+
+    .form-grid input:focus, .form-grid select:focus, .form-grid textarea:focus {
+        border-color: #007bff;
+        outline: none;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+    }
+
+    /* Button Styling */
+    .cta-button {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 12px;
+        font-size: 18px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .cta-button:hover {
+        background: #0056b3;
+        transform: scale(1.05);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .section {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .section-image {
+            width: 100%;
+        }
+
+        .form-container {
+            width: 100%;
+        }
+    }
+</style>
+
+<section class="section">
+    <!-- Form Section -->
+    <div class="form-container">
+        <h2>Hostel Admission</h2>
+
+        {% if not user.is_authenticated %}
+            <div class="alert">
+                Please <a href="{% url 'login' %}">login</a> or <a href="{% url 'register' %}">register</a> first to apply for admission.
+            </div>
+        {% else %}
+            <form method="post" class="form-grid" id="admission-form">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+
+                {% for field in form %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="error">{{ field.errors|striptags }}</div>
+                    {% endif %}
+                {% endfor %}
+
+                <button type="submit" class="cta-button">Submit Application</button>
+            </form>
+        {% endif %}
+    </div>
+
+    <!-- Image on the Right -->
+    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c" alt="Admission Desk" class="section-image">
+</section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("admission-form");
+
+        if (form) {
+            form.addEventListener("submit", function (event) {
+                let inputs = form.querySelectorAll("input, select, textarea");
+                let valid = true;
+
+                inputs.forEach((input) => {
+                    if (input.value.trim() === "") {
+                        input.style.border = "2px solid red";
+                        valid = false;
+                    } else {
+                        input.style.border = "1px solid #ccc";
+                    }
+                });
+
+                if (!valid) {
+                    event.preventDefault();
+                    alert("Please fill in all required fields!");
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Serenity Boys Hostel{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="loader">
+            <div class="loader-inner"></div>
+        </div>
+        <p>Loading...</p>
+    </div>
+
+    <!-- Alert Messages -->
+    <div id="alert-container" class="alert-container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %} show">
+                    <div class="alert-content">
+                        <i class="alert-icon fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %}"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                    <button class="alert-close" onclick="this.parentElement.classList.remove('show');">&times;</button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <header>
+        <div class="header-content">
+            <div class="logo-container">
+                <div class="logo">
+                    <span class="logo-icon"><i class="fas fa-home"></i></span>
+                    <div class="logo-text">
+                        <h1>Serenity</h1>
+                        <span class="tagline">Boys Hostel</span>
+                    </div>
+                </div>
+            </div>
+            <p class="header-slogan">A Safe Haven for Student Living</p>
+            <div id="user-info" class="user-info">
+                {% if user.is_authenticated %}
+                    <span class="welcome-text">Welcome, {{ user.username }}</span>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="mobile-logo">
+                <div class="logo-small">
+                    <i class="fas fa-home"></i> Serenity
+                </div>
+            </div>
+            <button class="menu-toggle" aria-label="Toggle menu">
+                <span class="hamburger"></span>
+            </button>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="{% url 'index' %}" class="nav-link"><i class="fas fa-home"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'about' %}" class="nav-link"><i class="fas fa-info-circle"></i> About</a>
+                </li>
+                
+                <!-- Services Dropdown -->
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle">
+                        <i class="fas fa-concierge-bell"></i> Services <i class="fas fa-chevron-down"></i>
+                    </a>
+                    <div class="dropdown-connector"></div>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-item">
+                            <a href="{% url 'index' %}#rooms" class="dropdown-link"><i class="fas fa-bed"></i> Rooms</a>
+                        </li>
+                        <li class="dropdown-item">
+                            <a href="{% url 'index' %}#availability" class="dropdown-link"><i class="fas fa-calendar-check"></i> Availability</a>
+                        </li>
+                        <li class="dropdown-item">
+                            <a href="{% url 'index' %}#mess" class="dropdown-link"><i class="fas fa-utensils"></i> Mess</a>
+                        </li>
+                        <li class="dropdown-item">
+                            <a href="{% url 'book_laundry' %}" class="dropdown-link"><i class="fas fa-tshirt"></i> Laundry</a>
+                        </li>
+                    </ul>
+                </li>
+                
+                <!-- Management Dropdown -->
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle">
+                        <i class="fas fa-tasks"></i> Management <i class="fas fa-chevron-down"></i>
+                    </a>
+                    <div class="dropdown-connector"></div>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-item">
+                            <a href="{% url 'admission_apply' %}" class="dropdown-link"><i class="fas fa-user-plus"></i> Admission</a>
+                        </li>
+                        <li class="dropdown-item">
+                            <a href="{% url 'submit_feedback' %}" class="dropdown-link"><i class="fas fa-comment"></i> Feedback</a>
+                        </li>
+                        <li class="dropdown-item">
+                            <a href="{% url 'index' %}#rules" class="dropdown-link"><i class="fas fa-gavel"></i> Rules</a>
+                        </li>
+                        <li class="dropdown-item">
+                            <a href="{% url 'view_records' %}" class="dropdown-link"><i class="fas fa-file-alt"></i> Records</a>
+                        </li>
+                    </ul>
+                </li>
+                
+                
+                <li class="nav-item">
+                    <a href="{% url 'contact' %}" class="nav-link"><i class="fas fa-envelope"></i> Contact</a>
+                </li>
+                
+                <!-- Account Dropdown -->
+                <li class="nav-item dropdown account-dropdown">
+                    <a href="#" class="nav-link dropdown-toggle">
+                        <i class="fas fa-user-circle"></i> 
+                        {% if user.is_authenticated %}
+                            Account
+                        {% else %}
+                            Account
+                        {% endif %}
+                        <i class="fas fa-chevron-down"></i>
+                    </a>
+                    <div class="dropdown-connector"></div>
+                    <ul class="dropdown-menu">
+                        {% if user.is_authenticated %}
+                            <li class="dropdown-item">
+                                <a href="{% url 'view_records' %}" class="dropdown-link"><i class="fas fa-id-card"></i> My Profile</a>
+                            </li>
+                            <li class="dropdown-item">
+                                <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+                                    {% csrf_token %}
+                                </form>
+                                <a href="#" onclick="document.getElementById('logout-form').submit(); return false;" class="dropdown-link logout-link">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="dropdown-item">
+                                <a href="{% url 'login' %}" class="dropdown-link"><i class="fas fa-sign-in-alt"></i> Login</a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="{% url 'register' %}" class="dropdown-link"><i class="fas fa-user-plus"></i> Register</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Scroll to top button -->
+    <button id="scroll-top" class="scroll-top-btn" title="Go to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Enhanced Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section about">
+                <div class="footer-logo">
+                    <span class="logo-icon"><i class="fas fa-home"></i></span>
+                    <span class="footer-logo-text">Serenity</span>
+                </div>
+                <p>Providing comfortable and secure accommodation for students since 2010. Our mission is to create a home away from home.</p>
+                <div class="contact">
+                    <p><i class="fas fa-map-marker-alt"></i> 123 College Road, University Area, New Delhi</p>
+                    <p><i class="fas fa-phone"></i> +91 11 2345 6789</p>
+                    <p><i class="fas fa-envelope"></i> info@serenityboys.com</p>
+                </div>
+                <div class="socials">
+                    <a href="https://www.facebook.com/" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://twitter.com/" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.instagram.com/" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+            <div class="footer-section links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="{% url 'index' %}">Home</a></li>
+                    <li><a href="{% url 'about' %}">About Us</a></li>
+                    <li><a href="{% url 'admission_apply' %}">Apply for Admission</a></li>
+                    <li><a href="{% url 'index' %}#rooms">Room Types</a></li>
+                    <li><a href="{% url 'index' %}#mess">Mess Menu</a></li>
+                    <li><a href="{% url 'index' %}#rules">Hostel Rules</a></li>
+                    <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-section facilities">
+                <h3>Our Facilities</h3>
+                <ul>
+                    <li><i class="fas fa-wifi"></i> High-Speed WiFi</li>
+                    <li><i class="fas fa-utensils"></i> Mess Facility</li>
+                    <li><i class="fas fa-tshirt"></i> Laundry Service</li>
+                    <li><i class="fas fa-book"></i> Study Rooms</li>
+                    <li><i class="fas fa-dumbbell"></i> Fitness Area</li>
+                    <li><i class="fas fa-shield-alt"></i> 24/7 Security</li>
+                    <li><i class="fas fa-first-aid"></i> Medical Assistance</li>
+                </ul>
+            </div>
+            <div class="footer-section newsletter">
+                <h3>Subscribe to Newsletter</h3>
+                <p>Stay updated with our latest news and offers.</p>
+                <form action="#" method="post" class="newsletter-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input type="email" name="email" placeholder="Enter your email" required>
+                        <button type="submit" class="btn-subscribe">Subscribe</button>
+                    </div>
+                </form>
+                <div class="app-download">
+                    <p>Download our app:</p>
+                    <div class="app-buttons">
+                        <a href="#" class="app-btn" aria-label="Download on App Store">
+                            <i class="fab fa-apple"></i> App Store
+                        </a>
+                        <a href="#" class="app-btn" aria-label="Get it on Google Play">
+                            <i class="fab fa-google-play"></i> Google Play
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© {% now "Y" %} Serenity Boys Hostel • Designed with ❤️ • All rights reserved</p>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

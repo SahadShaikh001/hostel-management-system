@@ -1,0 +1,78 @@
+{% extends 'hostel_app/base.html' %}
+
+{% block title %}Your Stay Records{% endblock %}
+
+{% block content %}
+<section class="section">
+    <img src="https://images.unsplash.com/photo-1590073844006-33379778ae09" alt="Records Office" class="section-image">
+    <h2>Your Stay Records</h2>
+    
+    {% if not user.is_authenticated %}
+        <div class="alert alert-warning">
+            Please <a href="{% url 'login' %}">login</a> to view your records.
+        </div>
+    {% else %}
+        {% if records %}
+            <table id="records-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Room</th>
+                        <th>Join Date</th>
+                        <th>Duration</th>
+                        <th>Fees</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                        <tr>
+                            <td>{{ record.admission_code }}</td>
+                            <td>{{ record.room_type.type_name }}</td>
+                            <td>{{ record.join_date }}</td>
+                            <td>{{ record.duration }} months</td>
+                            <td>₹{{ record.total_fees|floatformat:2 }}</td>
+                            <td>{{ record.payment_status }} ({{ record.get_payment_method_display }})</td>
+                            <td>{{ record.status }}</td>
+                            <td>
+                                {% if record.status == 'Pending Approval' %}
+                                    <a href="{% url 'cancel_admission' record.admission_code %}" class="cancel-btn" onclick="return confirm('Are you sure you want to cancel this application?')">Cancel</a>
+                                {% endif %}
+                                <button onclick="downloadReceipt('{{ record.admission_code }}')">Receipt</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>You don't have any stay records yet.</p>
+            <a href="{% url 'admission_apply' %}" class="cta-button">Apply for Admission</a>
+        {% endif %}
+    {% endif %}
+</section>
+
+<script>
+    function downloadReceipt(code) {
+        // In a real application, this would make an AJAX request to generate a receipt
+        // For now, we'll just create a simple text receipt
+        fetch(`/api/receipt/${code}/`)
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `receipt_${code}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                console.error('Error downloading receipt:', error);
+                alert('Could not download receipt. Please try again later.');
+            });
+    }
+</script>
+{% endblock %}
+

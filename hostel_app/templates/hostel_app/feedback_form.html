@@ -1,0 +1,24 @@
+{% extends 'hostel_app/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Submit Feedback{% endblock %}
+
+{% block content %}
+<section class="section">
+    <img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39" alt="Feedback Corner" class="section-image">
+    <h2>Hostel Feedback</h2>
+    
+    {% if not user.is_authenticated %}
+        <div class="alert alert-warning">
+            Please <a href="{% url 'login' %}">login</a> to submit feedback.
+        </div>
+    {% else %}
+        <form method="post" class="form-grid">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="cta-button">Submit Feedback</button>
+        </form>
+    {% endif %}
+</section>
+{% endblock %}
+

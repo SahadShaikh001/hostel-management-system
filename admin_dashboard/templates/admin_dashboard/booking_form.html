@@ -1,0 +1,26 @@
+{% extends 'admin_dashboard/base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+    <form method="post" class="admin-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="room_type">Room Type</label>
+            <select name="room_type" id="room_type" required>
+                {% for room in room_types %}
+                    <option value="{{ room.id }}">{{ room.type_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="date">Date</label>
+            <input type="date" name="date" id="date" required>
+        </div>
+        <div class="form-group">
+            <label for="booked_count">Booked Count</label>
+            <input type="number" name="booked_count" id="booked_count" min="0" required>
+        </div>
+        <button type="submit" class="btn">Save</button>
+        <a href="{% url 'admin_bookings' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+{% endblock %}

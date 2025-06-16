@@ -1,0 +1,25 @@
+{% extends 'admin_dashboard/base.html' %}
+{% block title %}Bookings{% endblock %}
+{% block page_title %}Manage Bookings{% endblock %}
+{% block content %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Room Type</th>
+                <th>Date</th>
+                <th>Booked Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.room_type.type_name }}</td>
+                    <td>{{ booking.date }}</td>
+                    <td>{{ booking.booked_count }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="3">No bookings found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

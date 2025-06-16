@@ -1,0 +1,78 @@
+{% extends 'hostel_app/base.html' %}
+
+{% block title %}About Us - Serenity Boys Hostel{% endblock %}
+
+{% block content %}
+<section class="about-section">
+    <img src="https://images.unsplash.com/photo-1517502884422-41eaead166d4" alt="Hostel Image" class="about-image">
+    
+    <div class="about-content">
+        <h2>Welcome to Serenity Boys Hostel</h2>
+        <p>Providing safe, affordable, and comfortable accommodation for students since 2010. We believe in creating a home-like atmosphere for our residents.</p>
+        
+        <h3>Why Choose Us?</h3>
+        <ul>
+            <li>🏠 Spacious & well-furnished rooms</li>
+            <li>🍽️ Healthy & hygienic meals</li>
+            <li>📶 High-speed WiFi & study zones</li>
+            <li>🔒 24/7 Security & CCTV surveillance</li>
+            <li>🛠️ Regular cleaning & maintenance</li>
+        </ul>
+        
+        <h3>Our Mission</h3>
+        <p>To provide a secure, peaceful, and study-friendly environment for students.</p>
+    </div>
+    
+    <div class="about-cta">
+        <a href="{% url 'admission_apply' %}" class="cta-button">Apply Now</a>
+    </div>
+</section>
+
+<style>
+    .about-section {
+        max-width: 700px;
+        margin: 40px auto;
+        text-align: center;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .about-image {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .about-content h2 {
+        color: #007bff;
+    }
+
+    .about-content ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .about-content ul li {
+        font-size: 16px;
+        padding: 5px 0;
+    }
+
+    .cta-button {
+        display: inline-block;
+        background: #007bff;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        margin-top: 15px;
+        transition: 0.3s;
+    }
+
+    .cta-button:hover {
+        background: #0056b3;
+    }
+</style>
+{% endblock %}
